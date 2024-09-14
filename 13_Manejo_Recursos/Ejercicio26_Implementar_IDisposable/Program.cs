@@ -1,2 +1,43 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System;
+
+public class Recurso : IDisposable
+{
+    
+    private bool _disposed = false;
+
+  
+    public void Dispose()
+    {
+        Dispose(true);
+        
+        GC.SuppressFinalize(this);
+    }
+
+    
+    protected virtual void Dispose(bool disposing)
+    {
+     
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            
+            Console.WriteLine("Recursos gestionados han sido liberados.");
+        }
+
+        
+        Console.WriteLine("Recursos no gestionados han sido liberados.");
+
+        _disposed = true;
+    }
+
+ 
+    ~Recurso()
+    {
+       
+        Dispose(false);
+    }
+}
+
+
