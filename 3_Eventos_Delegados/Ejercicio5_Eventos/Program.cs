@@ -1,42 +1,29 @@
 ﻿using System;
 
-public class Recurso : IDisposable
+class AlarmClock
 {
-    
-    private bool _disposed = false;
-
-  
-    public void Dispose()
-    {
-        Dispose(true);
-        
-        GC.SuppressFinalize(this);
-    }
-
-    
-    protected virtual void Dispose(bool disposing)
-    {
-     
-        if (_disposed)
-            return;
-
-        if (disposing)
-        {
-            
-            Console.WriteLine("Recursos gestionados han sido liberados.");
-        }
-
-        
-        Console.WriteLine("Recursos no gestionados han sido liberados.");
-
-        _disposed = true;
-    }
-
  
-    ~Recurso()
+    public event EventHandler OnAlarmRing;
+
+    private DateTime alarmTime;
+
+    
+    public AlarmClock(DateTime time)
     {
-       
-        Dispose(false);
+        alarmTime = time;
+    }
+
+    
+    public void CheckAlarm()
+    {
+        if (DateTime.Now >= alarmTime)
+        {
+           
+            if (OnAlarmRing != null)
+            {
+                OnAlarmRing(this, EventArgs.Empty);
+            }
+        }
     }
 }
 
@@ -44,12 +31,33 @@ class Program
 {
     static void Main(string[] args)
     {
-        using (Recurso recurso = new Recurso())
-        {
-            
-            Console.WriteLine("Uso del recurso...");
-        }
+        
+        Console.WriteLine("Ingrese la hora de la alarma (hh:mm:ss):");
+        string Ingresar = Console.ReadLine();
+        DateTime alarmTime;
 
- 
+        
+        if (DateTime.TryParse(Ingresar, out alarmTime))
+        {
+            AlarmClock alarm = new AlarmClock(alarmTime);
+
+            
+            alarm.OnAlarmRing += (sender, e) =>
+            {
+                Console.WriteLine("¡La alarma ha sonado!");
+            };
+
+            Console.WriteLine("Alarma configurada para: " + alarmTime);
+
+            
+            while (true)
+            {
+                alarm.CheckAlarm();
+            }
+        }
+        else
+        {
+            Console.WriteLine("Formato de hora inválido.");
+        }
     }
 }
